@@ -16,6 +16,9 @@ public:
 	// Sets default values for this character's properties
 	AAsteroidsPlayerCharacter();
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> ProjectileActor;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,5 +34,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	UStaticMeshComponent* SpaceshipMeshComponent;
+
 
 };

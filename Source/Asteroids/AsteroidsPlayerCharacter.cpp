@@ -27,7 +27,6 @@ void AAsteroidsPlayerCharacter::BeginPlay()
 
 void AAsteroidsPlayerCharacter::FireProjectile()
 {
-	// spawn projectile
 }
 
 void AAsteroidsPlayerCharacter::MoveForward(float Value)
