@@ -20,7 +20,6 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -29,10 +28,8 @@ void AProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FVector Location = GetActorLocation();
-
 	Location += GetActorForwardVector() * Speed * DeltaTime;
 
 	SetActorLocation(Location);
-
 }
 

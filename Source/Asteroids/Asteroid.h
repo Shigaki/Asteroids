@@ -22,11 +22,24 @@ class ASTEROIDS_API AAsteroid : public AProjectile
 {
 	GENERATED_BODY()
 	
+private:
+	
 protected:
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(VisibleAnywhere)
+	float RotateSpeed;
+	UPROPERTY(VisibleAnywhere)
+	float RollValue;
+	UPROPERTY(VisibleAnywhere)
+	float PitchValue;
+	UPROPERTY(VisibleAnywhere)
+	float YawValue;
 
 	
 public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
 	TEnumAsByte<ESize> Size;
