@@ -21,10 +21,13 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(ReplicatedUsing = OnRep_HealthUpdated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	float Health{ 1 };
+	int32 Health;
+
+	UPROPERTY(ReplicatedUsing = OnRep_HealthUpdated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	int32 MaxHealth = 1;
 
 	UPROPERTY(ReplicatedUsing = OnRep_DeadUpdated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	bool bDead{ false };
+	bool bDead = false ;
 
 public:
 
@@ -35,7 +38,13 @@ public:
 	void SetHealth(int32 InHealth);
 
 	UFUNCTION(BlueprintCallable)
-	void TakeDamage(int32 InDamage);
+	int32 GetMaxHealth();
+
+	UFUNCTION(BlueprintCallable)
+	void SetMaxHealth(int32 InHealth);
+
+	UFUNCTION(BlueprintCallable)
+	int32 TakeDamage(int32 InDamage);
 
 	UFUNCTION(BlueprintCallable)
 	void Die();
@@ -44,10 +53,10 @@ public:
 	bool CheckbIsAlive();
 
 	UFUNCTION()
-	virtual void OnRep_HealthUpdated();
+	void OnRep_HealthUpdated();
 
 	UFUNCTION()
-	virtual void OnRep_DeadUpdated();
+	void OnRep_DeadUpdated();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

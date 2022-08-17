@@ -22,7 +22,7 @@ void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetHealth(1);
+	SetHealth(MaxHealth);
 	
 }
 
@@ -52,13 +52,21 @@ void UHealthComponent::SetHealth(int32 InHealth)
 	Health = InHealth;
 }
 
-void UHealthComponent::TakeDamage(int32 InDamage)
+int32 UHealthComponent::GetMaxHealth()
+{
+	return MaxHealth;
+}
+
+
+void UHealthComponent::SetMaxHealth(int32 InHealth)
+{
+	MaxHealth = InHealth;
+}
+
+int32 UHealthComponent::TakeDamage(int32 InDamage)
 {
 	Health -= InDamage;
-	if (Health <= 0)
-	{
-		Die();
-	}
+	return Health;
 }
 
 void UHealthComponent::Die()
