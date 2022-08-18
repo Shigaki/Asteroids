@@ -3,6 +3,7 @@
 
 #include "Asteroid.h"
 #include "HealthComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AAsteroid::AAsteroid()
 {
@@ -11,6 +12,7 @@ AAsteroid::AAsteroid()
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
 	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 void AAsteroid::SetLifeSpan(float InLifeSpan)
@@ -21,7 +23,10 @@ void AAsteroid::SetLifeSpan(float InLifeSpan)
 
 void AAsteroid::SetActive(bool InActive)
 {
-	HealthComponent->SetHealth(HealthComponent->GetMaxHealth());
+	if (InActive)
+	{
+		HealthComponent->SetHealth(HealthComponent->GetMaxHealth());
+	}
 	bActive = InActive;
 	SetActorHiddenInGame(!InActive);
 }
@@ -79,7 +84,7 @@ void AAsteroid::Deactivate()
 	SetActive(false);
 }
 
-float AAsteroid::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AAsteroid::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	if (GEngine)
 	{
@@ -90,9 +95,16 @@ float AAsteroid::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 			FString(TEXT("Hit"))
 		);
 	}
-	if (HealthComponent->TakeDamage(static_cast<int32>(DamageAmount)) <= 0)
+	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount) <= 0))
 	{
 		Deactivate();
 	}
-	return HealthComponent->GetHealth();
+	return DamageAmount;
+}
+
+void AAsteroid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AAsteroid, bActive);
+	DOREPLIFETIME(AAsteroid, Size);
 }

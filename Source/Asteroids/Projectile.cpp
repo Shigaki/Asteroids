@@ -2,6 +2,7 @@
 
 
 #include "Projectile.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -31,5 +32,11 @@ void AProjectile::Tick(float DeltaTime)
 	Location += GetActorForwardVector() * Speed * DeltaTime;
 
 	SetActorLocation(Location);
+}
+
+void AProjectile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AProjectile, Speed);
 }
 

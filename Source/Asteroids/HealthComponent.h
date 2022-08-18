@@ -20,13 +20,13 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(ReplicatedUsing = OnRep_HealthUpdated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	int32 Health;
 
-	UPROPERTY(ReplicatedUsing = OnRep_HealthUpdated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	int32 MaxHealth = 1;
 
-	UPROPERTY(ReplicatedUsing = OnRep_DeadUpdated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	bool bDead = false ;
 
 public:
@@ -46,17 +46,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int32 TakeDamage(int32 InDamage);
 
-	UFUNCTION(BlueprintCallable)
-	void Die();
-
 	UFUNCTION()
-	bool CheckbIsAlive();
-
-	UFUNCTION()
-	void OnRep_HealthUpdated();
-
-	UFUNCTION()
-	void OnRep_DeadUpdated();
+	bool IsAlive();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

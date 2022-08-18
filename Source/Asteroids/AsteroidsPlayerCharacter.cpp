@@ -3,6 +3,8 @@
 
 #include "AsteroidsPlayerCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "HealthComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 
 // Sets default values
@@ -11,9 +13,10 @@ AAsteroidsPlayerCharacter::AAsteroidsPlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	SpaceshipMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SpaceshipMesh"));
-	SpaceshipMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 // Called when the game starts or when spawned
@@ -21,8 +24,6 @@ void AAsteroidsPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpaceshipMeshComponent->BodyInstance.bLockXRotation = true;
-	SpaceshipMeshComponent->BodyInstance.bLockYRotation = true;
 }
 
 void AAsteroidsPlayerCharacter::FireProjectile()
@@ -53,5 +54,19 @@ void AAsteroidsPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 	PlayerInputComponent->BindAxis("MoveForward", this, &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis("TurnRight", this, &ThisClass::TurnRight);
 
+}
+
+float AAsteroidsPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount) <= 0))
+	{
+		GhostMode(true);
+	}
+	return DamageAmount;
+}
+
+bool AAsteroidsPlayerCharacter::GhostMode(bool)
+{
+	return false;
 }
 

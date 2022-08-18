@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AObjectSpawner::AObjectSpawner()
@@ -24,32 +25,34 @@ AObjectSpawner::AObjectSpawner()
 void AObjectSpawner::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (HasAuthority())
+	{
+		GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Server_Spawn_Implementation, SpawnCooldown, false);
+	}
 	
-	GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false);
 }
 
-float AObjectSpawner::GetLifeSpan()
+void AObjectSpawner::Server_Spawn_Implementation()
 {
-	return LifeSpan;
-}
-
-void AObjectSpawner::Spawn()
-{
-	ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	AAsteroid* PoolableActor = ObjectPooler->GetPooledObject();
 	if (PoolableActor == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Cannot Spawn"));
-		GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false);
+		GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Server_Spawn_Implementation, SpawnCooldown, false);
 		return;
 	}
-	FVector SpawnLocation = MyCharacter->GetNavAgentLocation();
-	SpawnLocation.Z = 100.f;
+	SpawnLocation = FVector(FMath::RandRange(-1000.f, 1000.f), FMath::RandRange(-700.f, 700.f), 100.f);
 	PoolableActor->SetActorLocation(SpawnLocation);
 	PoolableActor->SetLifeSpan(LifeSpan);
 	PoolableActor->SetActive(true);
-	PoolableActor->SetActorRotation(MyCharacter->GetActorRotation());
-	GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false);
+	PoolableActor->SetActorRotation(FRotator().ZeroRotator);
+	GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Server_Spawn_Implementation, SpawnCooldown, false);
 	UE_LOG(LogTemp, Warning, TEXT("Spawn"));
 }
 
+void AObjectSpawner::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AObjectSpawner, SpawnLocation);
+}

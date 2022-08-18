@@ -14,9 +14,6 @@ enum ESize
 	Large		UMETA(DisplayName = "Large"),
 };
 
-/**
- * 
- */
 UCLASS()
 class ASTEROIDS_API AAsteroid : public AProjectile
 {
@@ -27,17 +24,19 @@ public:
 	AAsteroid();
 
 	virtual void SetLifeSpan(float InLifeSpan) override;
+
 	void SetActive(bool InActive);
+
 	bool IsActive();
+
+	void Deactivate();
 
 protected:
 	virtual void BeginPlay() override;
 	
 	float LifeSpan = 20.f;
 	FTimerHandle LifeSpanTimer;
-	bool bActive;
-	void Deactivate();
-
+	
 	UPROPERTY(VisibleAnywhere)
 	float RotateSpeed;
 	UPROPERTY(VisibleAnywhere)
@@ -47,8 +46,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	float YawValue;
 
-private:
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	class UHealthComponent* HealthComponent;
 	
@@ -56,10 +54,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+	UPROPERTY(Replicated, EditAnywhere, Category = "Properties")
 	TEnumAsByte<ESize> Size;
 
-	UPROPERTY(EditAnywhere, Category = "Properties")
-	int32 PoolValue = 1;
-	
+	UPROPERTY(Replicated)
+	bool bActive;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

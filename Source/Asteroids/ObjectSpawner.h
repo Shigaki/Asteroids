@@ -22,7 +22,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	float GetLifeSpan();
+
+	//float GetLifeSpan();
 	class UBoxComponent* SpawnVolume;
 
 	UPROPERTY(EditAnywhere, Category = "Spawner")
@@ -39,5 +40,11 @@ private:
 
 	FTimerHandle SpawnCooldownTimer;
 
-	void Spawn();
+	UFUNCTION(Server, Reliable)
+	void Server_Spawn();
+
+	UPROPERTY(Replicated)
+	FVector SpawnLocation;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

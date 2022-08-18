@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Components/StaticMeshComponent.h"
 #include "AsteroidsPlayerCharacter.generated.h"
 
 UCLASS()
@@ -28,12 +27,14 @@ protected:
 	void MoveForward(float Value);
 	void TurnRight(float Value);
 
+	class UHealthComponent* HealthComponent;
+
 public:	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(BlueprintReadWrite)
-	UStaticMeshComponent* SpaceshipMeshComponent;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	bool GhostMode(bool bDead);
 
 };
