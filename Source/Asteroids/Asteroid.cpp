@@ -15,10 +15,12 @@ AAsteroid::AAsteroid()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	Mesh->SetupAttachment(DefaultRoot);
-
+	
 	SetActorEnableCollision(false);
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+
+	Size = static_cast<ESize>(FMath::RandRange(0, 2));
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
@@ -48,8 +50,6 @@ bool AAsteroid::IsActive()
 void AAsteroid::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Size = static_cast<ESize>(FMath::RandRange(0, 2));
 
 	switch(Size)
 	{

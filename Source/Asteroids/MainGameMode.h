@@ -14,14 +14,21 @@ class ASTEROIDS_API AMainGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	
+private:
+
+	void EndMatchCheck();
+	
 public:
 
-	int32 MaxNumPlayers;
+	int32 MaxNumPlayers = 2;
 	TArray<class APlayerController*> PlayerControllerList;
 
+	int32 NumDeadPlayers = 0;
 
-	virtual bool ReadyToStartMatch_Implementation() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
+	virtual void EndMatch() override;
+
+	void IncrementNumDeadPlayers(bool bIncrement);
 
 };

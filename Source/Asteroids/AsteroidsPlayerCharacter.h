@@ -36,7 +36,16 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-	bool GhostMode(bool bDead);
+	UPROPERTY(Replicated)
+	bool bDead = false;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsDead();
+
+	UFUNCTION(BlueprintCallable)
+	void Ressurect();
+
+	void EnterGhostMode();
 
 	// Teleport Interface
 	/*
@@ -47,5 +56,7 @@ public:
 	virtual void Teleport_Implementation() override;
 	void SetTeleportOnCooldown();
 	*/
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 };
