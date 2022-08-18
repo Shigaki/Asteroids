@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "TeleportInterface.h"
 #include "AsteroidsPlayerCharacter.generated.h"
 
 UCLASS()
-class ASTEROIDS_API AAsteroidsPlayerCharacter : public ACharacter
+class ASTEROIDS_API AAsteroidsPlayerCharacter : public ACharacter, public ITeleportInterface
 {
 	GENERATED_BODY()
 
@@ -36,5 +37,15 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	bool GhostMode(bool bDead);
+
+	// Teleport Interface
+	/*
+	bool bCanTeleport = true;
+	float TeleportCooldown = 1.f;
+	FTimerHandle TeleportCooldownTimer;
+
+	virtual void Teleport_Implementation() override;
+	void SetTeleportOnCooldown();
+	*/
 
 };

@@ -40,11 +40,7 @@ private:
 
 	FTimerHandle SpawnCooldownTimer;
 
-	UFUNCTION(Server, Reliable)
-	void Server_Spawn();
+	void Spawn();
 
-	UPROPERTY(Replicated)
 	FVector SpawnLocation;
-
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

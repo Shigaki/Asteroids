@@ -44,12 +44,4 @@ void UObjectPoolComponent::BeginPlay()
 			}
 		}
 	}
-	
-}
-
-void UObjectPoolComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UObjectPoolComponent, PoolSize);
-	DOREPLIFETIME(UObjectPoolComponent, Pool);
 }

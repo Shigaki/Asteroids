@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Projectile.h"
+#include "GameFramework/Actor.h"
 #include "Asteroid.generated.h"
 
 UENUM()
@@ -15,7 +15,7 @@ enum ESize
 };
 
 UCLASS()
-class ASTEROIDS_API AAsteroid : public AProjectile
+class ASTEROIDS_API AAsteroid : public AActor
 {
 	GENERATED_BODY()
 	
@@ -33,6 +33,12 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class USceneComponent* DefaultRoot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UStaticMeshComponent* Mesh;
 	
 	float LifeSpan = 20.f;
 	FTimerHandle LifeSpanTimer;
@@ -59,6 +65,9 @@ public:
 
 	UPROPERTY(Replicated)
 	bool bActive;
+
+	UPROPERTY(Replicated, EditAnywhere)
+	float Speed;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

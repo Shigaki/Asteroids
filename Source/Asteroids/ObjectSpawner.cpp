@@ -28,31 +28,26 @@ void AObjectSpawner::BeginPlay()
 
 	if (HasAuthority())
 	{
-		GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Server_Spawn_Implementation, SpawnCooldown, false);
+		GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false);
 	}
-	
 }
 
-void AObjectSpawner::Server_Spawn_Implementation()
+void AObjectSpawner::Spawn()
 {
 	AAsteroid* PoolableActor = ObjectPooler->GetPooledObject();
 	if (PoolableActor == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Cannot Spawn"));
-		GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Server_Spawn_Implementation, SpawnCooldown, false);
+		//UE_LOG(LogTemp, Warning, TEXT("Cannot Spawn"));
+		GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false);
 		return;
 	}
-	SpawnLocation = FVector(FMath::RandRange(-1000.f, 1000.f), FMath::RandRange(-700.f, 700.f), 100.f);
+	SpawnLocation.X = FMath::RandRange(800.f, 1000.f) * (FMath::RandBool() ? 1 : -1);
+	SpawnLocation.Y	= FMath::RandRange(600.f, 700.f)  * (FMath::RandBool() ? 1 : -1);
+	SpawnLocation.Z = 100.f;
 	PoolableActor->SetActorLocation(SpawnLocation);
 	PoolableActor->SetLifeSpan(LifeSpan);
 	PoolableActor->SetActive(true);
-	PoolableActor->SetActorRotation(FRotator().ZeroRotator);
-	GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Server_Spawn_Implementation, SpawnCooldown, false);
-	UE_LOG(LogTemp, Warning, TEXT("Spawn"));
-}
-
-void AObjectSpawner::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AObjectSpawner, SpawnLocation);
+	PoolableActor->SetActorRotation(FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f));
+	GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false);
+	//UE_LOG(LogTemp, Warning, TEXT("Spawn"));
 }

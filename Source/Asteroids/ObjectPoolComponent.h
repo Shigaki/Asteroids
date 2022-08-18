@@ -27,11 +27,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ObjectPooler")
 	TSubclassOf<AAsteroid> PooledObjectSubclass;
 	
-	UPROPERTY(Replicated, EditAnywhere, Category = "ObjectPooler")
+	UPROPERTY(EditAnywhere, Category = "ObjectPooler")
 	int32 PoolSize = 10;
 
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	TArray<AAsteroid*> Pool;
-
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

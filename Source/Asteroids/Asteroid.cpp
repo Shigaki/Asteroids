@@ -7,6 +7,15 @@
 
 AAsteroid::AAsteroid()
 {
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+	DefaultRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultRoot"));
+	RootComponent = DefaultRoot;
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	Mesh->SetupAttachment(DefaultRoot);
+
 	SetActorEnableCollision(false);
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
@@ -40,30 +49,30 @@ void AAsteroid::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//Size = static_cast<ESize>(FMath::RandRange(0, 2));
+	Size = static_cast<ESize>(FMath::RandRange(0, 2));
 
 	switch(Size)
 	{
 		case ESize::Small:
 			Mesh->SetWorldScale3D(FVector(3.f, 3.f, 3.f));
-			RotateSpeed = 120.f;
+			Speed = FMath::RandRange(100.f, 200.f);
 			HealthComponent->SetMaxHealth(1);
 			break;
 		case ESize::Medium:
 			Mesh->SetWorldScale3D(FVector(8.f, 8.f, 8.f));
-			RotateSpeed = 40.f;
+			Speed = FMath::RandRange(40.f, 80.f);
 			HealthComponent->SetMaxHealth(2);
 			break;
 		case ESize::Large:
 			Mesh->SetWorldScale3D(FVector(13.f, 13.f, 13.f));
-			RotateSpeed = 20.f;
+			Speed = FMath::RandRange(20.f, 60.f);
 			HealthComponent->SetMaxHealth(3);
 			break;
 	}
 
-	RollValue  = FMath::RandRange(-RotateSpeed, RotateSpeed);
-	PitchValue = FMath::RandRange(-RotateSpeed, RotateSpeed);
-	YawValue   = FMath::RandRange(-RotateSpeed, RotateSpeed);
+	RollValue  = FMath::RandRange(-Speed, Speed);
+	PitchValue = FMath::RandRange(-Speed, Speed);
+	YawValue   = FMath::RandRange(-Speed, Speed);
 }
 
 // Called every frame
@@ -77,6 +86,11 @@ void AAsteroid::Tick(float DeltaTime)
 	Rotation.Yaw	= YawValue * DeltaTime;
 
 	Mesh->AddLocalRotation(Rotation);
+
+	FVector Location = GetActorLocation();
+	Location += GetActorForwardVector() * Speed * DeltaTime;
+
+	SetActorLocation(Location);
 }
 
 void AAsteroid::Deactivate()
@@ -107,4 +121,5 @@ void AAsteroid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AAsteroid, bActive);
 	DOREPLIFETIME(AAsteroid, Size);
+	DOREPLIFETIME(AAsteroid, Speed);
 }

@@ -67,6 +67,24 @@ float AAsteroidsPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 
 bool AAsteroidsPlayerCharacter::GhostMode(bool)
 {
+	// TODO - revive mechanic
 	return false;
 }
 
+/*
+void AAsteroidsPlayerCharacter::Teleport_Implementation()
+{
+	if (bCanTeleport)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("TELEPORTING"));
+		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, 100.f), false, nullptr, ETeleportType::TeleportPhysics);
+	}
+	bCanTeleport = false;
+	GetWorldTimerManager().SetTimer(TeleportCooldownTimer, this, &ThisClass::SetTeleportOnCooldown, TeleportCooldown, false);
+}
+
+void AAsteroidsPlayerCharacter::SetTeleportOnCooldown()
+{
+	bCanTeleport = true;
+}
+*/

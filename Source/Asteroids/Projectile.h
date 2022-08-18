@@ -32,5 +32,8 @@ public:
 	UPROPERTY(Replicated, EditAnywhere)
 	float Speed;
 
+	UPROPERTY(VisibleAnywhere)
+	float LifeSpan = 2.f;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
