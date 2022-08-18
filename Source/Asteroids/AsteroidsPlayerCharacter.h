@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "TeleportInterface.h"
 #include "AsteroidsPlayerCharacter.generated.h"
 
 UCLASS()
-class ASTEROIDS_API AAsteroidsPlayerCharacter : public ACharacter, public ITeleportInterface
+class ASTEROIDS_API AAsteroidsPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -16,7 +15,7 @@ public:
 	// Sets default values for this character's properties
 	AAsteroidsPlayerCharacter();
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TSubclassOf<AActor> ProjectileActor;
 
 protected:
@@ -24,11 +23,18 @@ protected:
 	virtual void BeginPlay() override;
 
 	void FireProjectile();
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_FireProjectile();
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multicast_FireProjectile();
 
 	void MoveForward(float Value);
 	void TurnRight(float Value);
 
 	class UHealthComponent* HealthComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class USceneComponent* Muzzle;
 
 public:	
 	// Called to bind functionality to input
@@ -46,16 +52,6 @@ public:
 	void Ressurect();
 
 	void EnterGhostMode();
-
-	// Teleport Interface
-	/*
-	bool bCanTeleport = true;
-	float TeleportCooldown = 1.f;
-	FTimerHandle TeleportCooldownTimer;
-
-	virtual void Teleport_Implementation() override;
-	void SetTeleportOnCooldown();
-	*/
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

@@ -100,15 +100,6 @@ void AAsteroid::Deactivate()
 
 float AAsteroid::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.f,
-			FColor::Red,
-			FString(TEXT("Hit"))
-		);
-	}
 	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount) <= 0))
 	{
 		Deactivate();

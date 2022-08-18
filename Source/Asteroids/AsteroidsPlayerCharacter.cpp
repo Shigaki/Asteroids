@@ -6,15 +6,20 @@
 #include "Kismet/GameplayStatics.h"
 #include "HealthComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SceneComponent.h"
 #include "MainGameMode.h"
 #include "Net/UnrealNetwork.h"
-
+#include "Projectile.h"
 
 // Sets default values
 AAsteroidsPlayerCharacter::AAsteroidsPlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle"));
+	Muzzle->SetupAttachment(RootComponent);
+	Muzzle->SetRelativeLocation(FVector(40.f, 0.f, 0.f));
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
@@ -31,6 +36,42 @@ void AAsteroidsPlayerCharacter::BeginPlay()
 
 void AAsteroidsPlayerCharacter::FireProjectile()
 {
+	if (!bDead)
+	{
+		if (HasAuthority())
+		{
+			Multicast_FireProjectile();
+		}
+		else
+		{
+			Server_FireProjectile();
+		}
+	}
+}
+
+void AAsteroidsPlayerCharacter::Server_FireProjectile_Implementation()
+{
+	Multicast_FireProjectile();
+}
+
+bool AAsteroidsPlayerCharacter::Server_FireProjectile_Validate()
+{
+	return true;
+}
+
+void AAsteroidsPlayerCharacter::Multicast_FireProjectile_Implementation()
+{
+	if (!bDead)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			
+			World->SpawnActor<AProjectile>(ProjectileActor, Muzzle->GetComponentLocation(), GetActorRotation(), SpawnParams);
+		}
+	}
 }
 
 void AAsteroidsPlayerCharacter::MoveForward(float Value)
@@ -103,24 +144,6 @@ void AAsteroidsPlayerCharacter::EnterGhostMode()
 		//apply mesh transparency
 	}
 }
-
-/*
-void AAsteroidsPlayerCharacter::Teleport_Implementation()
-{
-	if (bCanTeleport)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("TELEPORTING"));
-		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, 100.f), false, nullptr, ETeleportType::TeleportPhysics);
-	}
-	bCanTeleport = false;
-	GetWorldTimerManager().SetTimer(TeleportCooldownTimer, this, &ThisClass::SetTeleportOnCooldown, TeleportCooldown, false);
-}
-
-void AAsteroidsPlayerCharacter::SetTeleportOnCooldown()
-{
-	bCanTeleport = true;
-}
-*/
 
 void AAsteroidsPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
