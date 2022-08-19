@@ -4,6 +4,7 @@
 #include "Asteroid.h"
 #include "HealthComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 
 AAsteroid::AAsteroid()
 {
@@ -19,6 +20,12 @@ AAsteroid::AAsteroid()
 	SetActorEnableCollision(false);
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> SB_ExplosionObj(TEXT("/Game/Core/FX/SFX/SoundCue/SC_Explosion"));
+	if (SB_ExplosionObj.Succeeded())
+	{
+		SB_Explosion = SB_ExplosionObj.Object;
+	}
 
 	Size = static_cast<ESize>(FMath::RandRange(0, 2));
 
@@ -93,6 +100,14 @@ void AAsteroid::Tick(float DeltaTime)
 	SetActorLocation(Location);
 }
 
+void AAsteroid::Multicast_PlayExplosionSound_Implementation()
+{
+	if (SB_Explosion)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_Explosion, GetActorLocation());
+	}
+}
+
 void AAsteroid::Deactivate()
 {
 	SetActive(false);
@@ -102,6 +117,7 @@ float AAsteroid::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 {
 	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount) <= 0))
 	{
+		Multicast_PlayExplosionSound();
 		Deactivate();
 	}
 	return DamageAmount;
@@ -113,4 +129,5 @@ void AAsteroid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AAsteroid, bActive);
 	DOREPLIFETIME(AAsteroid, Size);
 	DOREPLIFETIME(AAsteroid, Speed);
+	DOREPLIFETIME(AAsteroid, SB_Explosion);
 }

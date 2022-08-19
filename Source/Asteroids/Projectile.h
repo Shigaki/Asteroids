@@ -25,6 +25,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* Mesh;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	class USoundBase* SB_Projectile;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

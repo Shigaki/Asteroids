@@ -3,6 +3,7 @@
 
 #include "Projectile.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -15,6 +16,12 @@ AProjectile::AProjectile()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	Mesh->SetupAttachment(DefaultRoot);
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> SB_ProjectileObj(TEXT("/Game/Core/FX/SFX/SoundCue/SC_GunShot"));
+	if (SB_ProjectileObj.Succeeded())
+	{
+		SB_Projectile = SB_ProjectileObj.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -23,6 +30,11 @@ void AProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	SetLifeSpan(LifeSpan);
+
+	if (SB_Projectile)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_Projectile, GetActorLocation(), 1.f, FMath::RandRange(0.95f, 1.f));
+	}
 }
 
 // Called every frame

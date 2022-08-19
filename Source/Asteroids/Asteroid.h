@@ -39,6 +39,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* Mesh;
+
+	UPROPERTY(Replicated, EditDefaultsOnly, Category = "Audio")
+	class USoundBase* SB_Explosion;
 	
 	float LifeSpan = 20.f;
 	FTimerHandle LifeSpanTimer;
@@ -51,6 +54,9 @@ protected:
 	float PitchValue;
 	UPROPERTY(VisibleAnywhere)
 	float YawValue;
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multicast_PlayExplosionSound();
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
