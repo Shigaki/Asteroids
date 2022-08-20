@@ -17,7 +17,12 @@ class ASTEROIDS_API AMainGameMode : public AGameMode
 private:
 
 	void EndMatchCheck();
-	
+
+protected:
+
+	virtual void BeginPlay() override;
+
+
 public:
 
 	int32 MaxNumPlayers = 2;

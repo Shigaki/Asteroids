@@ -3,10 +3,30 @@
 
 #include "MainGameState.h"
 #include "Net/UnrealNetwork.h"
+#include "Blueprint/UserWidget.h"
+#include "ScoreWidget.h"
 
-void AMainGameState::AddScore(int32 InScore)
+void AMainGameState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Score = 0;
+
+	if (IsValid(WidgetClass))
+	{
+		ScoreWidget = Cast<UScoreWidget>(CreateWidget(GetWorld(), WidgetClass));
+
+		if (ScoreWidget != nullptr)
+		{
+			ScoreWidget->AddToViewport();
+		}
+	}
+}
+
+void AMainGameState::UpdateScore(int32 InScore)
 {
 	Score += InScore;
+	ScoreWidget->UpdateScoreText(Score);
 }
 
 void AMainGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

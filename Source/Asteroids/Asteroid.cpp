@@ -5,6 +5,7 @@
 #include "HealthComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "Asteroids/MainGameState.h"
 
 AAsteroid::AAsteroid()
 {
@@ -63,16 +64,19 @@ void AAsteroid::BeginPlay()
 		case ESize::Small:
 			Mesh->SetWorldScale3D(FVector(3.f, 3.f, 3.f));
 			Speed = FMath::RandRange(100.f, 200.f);
+			ScoreValue = 100;
 			HealthComponent->SetMaxHealth(1);
 			break;
 		case ESize::Medium:
 			Mesh->SetWorldScale3D(FVector(8.f, 8.f, 8.f));
 			Speed = FMath::RandRange(40.f, 80.f);
+			ScoreValue = 60;
 			HealthComponent->SetMaxHealth(2);
 			break;
 		case ESize::Large:
 			Mesh->SetWorldScale3D(FVector(13.f, 13.f, 13.f));
 			Speed = FMath::RandRange(20.f, 60.f);
+			ScoreValue = 30;
 			HealthComponent->SetMaxHealth(3);
 			break;
 	}
@@ -100,6 +104,16 @@ void AAsteroid::Tick(float DeltaTime)
 	SetActorLocation(Location);
 }
 
+void AAsteroid::Multicast_UpdatePlayerScore_Implementation()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		AMainGameState* GameState = Cast<AMainGameState>(World->GetGameState());
+		GameState->UpdateScore(ScoreValue);
+	}
+}
+
 void AAsteroid::Multicast_PlayExplosionSound_Implementation()
 {
 	if (SB_Explosion)
@@ -117,6 +131,7 @@ float AAsteroid::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 {
 	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount) <= 0))
 	{
+		Multicast_UpdatePlayerScore();
 		Multicast_PlayExplosionSound();
 		Deactivate();
 	}
@@ -129,5 +144,6 @@ void AAsteroid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AAsteroid, bActive);
 	DOREPLIFETIME(AAsteroid, Size);
 	DOREPLIFETIME(AAsteroid, Speed);
+	DOREPLIFETIME(AAsteroid, ScoreValue);
 	DOREPLIFETIME(AAsteroid, SB_Explosion);
 }

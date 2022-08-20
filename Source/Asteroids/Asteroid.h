@@ -58,6 +58,9 @@ protected:
 	UFUNCTION(NetMulticast, Unreliable)
 	void Multicast_PlayExplosionSound();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_UpdatePlayerScore();
+
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	class UHealthComponent* HealthComponent;
@@ -71,9 +74,10 @@ public:
 
 	UPROPERTY(Replicated)
 	bool bActive;
-
-	UPROPERTY(Replicated, EditAnywhere)
+	UPROPERTY(Replicated)
 	float Speed;
+	UPROPERTY(Replicated)
+	int32 ScoreValue;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

@@ -28,7 +28,7 @@ void AObjectSpawner::BeginPlay()
 
 	if (HasAuthority())
 	{
-		GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false);
+		GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false, 3.f);
 	}
 }
 
@@ -45,9 +45,9 @@ void AObjectSpawner::Spawn()
 	SpawnLocation.Y	= FMath::RandRange(600.f, 700.f)  * (FMath::RandBool() ? 1 : -1);
 	SpawnLocation.Z = 100.f;
 	PoolableActor->SetActorLocation(SpawnLocation);
+	PoolableActor->SetActorRotation(FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f));
 	PoolableActor->SetLifeSpan(LifeSpan);
 	PoolableActor->SetActive(true);
-	PoolableActor->SetActorRotation(FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f));
 	GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false);
 	//UE_LOG(LogTemp, Warning, TEXT("Spawn"));
 }

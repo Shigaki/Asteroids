@@ -9,16 +9,30 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FAddScoreDelegate, int32, InScore);
+
 UCLASS()
 class ASTEROIDS_API AMainGameState : public AGameState
 {
 	GENERATED_BODY()
+	
+protected:
+
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	TSubclassOf<UUserWidget> WidgetClass;
+
+	UPROPERTY(VisibleInstanceOnly, Category = "Widget")
+	class UScoreWidget* ScoreWidget;
 
 public:
-	UPROPERTY(Replicated)
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 Score;
 
-	void AddScore(int32 InScore);
+	void UpdateScore(int32 InScore);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
