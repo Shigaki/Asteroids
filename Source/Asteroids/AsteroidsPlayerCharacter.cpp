@@ -7,6 +7,7 @@
 #include "HealthComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "MainGameMode.h"
 #include "Net/UnrealNetwork.h"
 #include "Projectile.h"
@@ -21,7 +22,13 @@ AAsteroidsPlayerCharacter::AAsteroidsPlayerCharacter()
 	Muzzle->SetupAttachment(RootComponent);
 	Muzzle->SetRelativeLocation(FVector(40.f, 0.f, 0.f));
 
+	SpaceshipMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SpaceshipMesh"));
+	SpaceshipMesh->SetupAttachment(RootComponent);
+
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+
+	bGenerateOverlapEventsDuringLevelStreaming = false;
+	SpaceshipMesh->SetGenerateOverlapEvents(false);
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
@@ -32,6 +39,8 @@ void AAsteroidsPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	bGenerateOverlapEventsDuringLevelStreaming = true;
+	SpaceshipMesh->SetGenerateOverlapEvents(true);
 }
 
 void AAsteroidsPlayerCharacter::FireProjectile()

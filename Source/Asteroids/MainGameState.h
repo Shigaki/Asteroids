@@ -22,10 +22,16 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, Category = "Widget")
-	TSubclassOf<UUserWidget> WidgetClass;
+	TSubclassOf<UUserWidget> ScoreWidgetClass;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Widget")
 	class UScoreWidget* ScoreWidget;
+
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	TSubclassOf<UUserWidget> EndGameWidgetClass;
+
+	UPROPERTY(VisibleInstanceOnly, Category = "Widget")
+	class UEndGameWidget* EndGameWidget;
 
 public:
 
@@ -33,6 +39,9 @@ public:
 	int32 Score;
 
 	void UpdateScore(int32 InScore);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void PopUpEndGameUI();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

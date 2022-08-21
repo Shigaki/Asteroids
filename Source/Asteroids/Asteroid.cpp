@@ -17,8 +17,7 @@ AAsteroid::AAsteroid()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	Mesh->SetupAttachment(DefaultRoot);
-	
-	SetActorEnableCollision(false);
+	Mesh->SetGenerateOverlapEvents(false);
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
@@ -30,7 +29,7 @@ AAsteroid::AAsteroid()
 
 	Size = static_cast<ESize>(FMath::RandRange(0, 2));
 
-	SetReplicates(true);
+	bReplicates = true;
 	SetReplicateMovement(true);
 }
 
@@ -47,6 +46,7 @@ void AAsteroid::SetActive(bool InActive)
 		HealthComponent->SetHealth(HealthComponent->GetMaxHealth());
 	}
 	bActive = InActive;
+	Mesh->SetGenerateOverlapEvents(InActive);
 	SetActorHiddenInGame(!InActive);
 }
 

@@ -22,7 +22,6 @@ protected:
 
 	virtual void BeginPlay() override;
 
-
 public:
 
 	int32 MaxNumPlayers = 2;
@@ -30,9 +29,13 @@ public:
 
 	int32 NumDeadPlayers = 0;
 
+	int32 NumReadyPlayers = 0;
+
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void EndMatch() override;
+
+	void PlayerReady();
 
 	void IncrementNumDeadPlayers(bool bIncrement);
 
