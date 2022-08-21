@@ -25,7 +25,7 @@ protected:
 public:
 
 	int32 MaxNumPlayers = 2;
-	TArray<class APlayerController*> PlayerControllerList;
+	TArray<class AAsteroidsPlayerController*> PlayerControllerList;
 
 	int32 NumDeadPlayers = 0;
 
@@ -35,7 +35,7 @@ public:
 
 	virtual void EndMatch() override;
 
-	void PlayerReady();
+	void VoteRestartGame(AAsteroidsPlayerController* Player);
 
 	void IncrementNumDeadPlayers(bool bIncrement);
 

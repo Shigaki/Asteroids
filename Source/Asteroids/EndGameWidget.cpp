@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "MainGameMode.h"
+#include "AsteroidsPlayerController.h"
 
 bool UEndGameWidget::Initialize()
 {
@@ -13,18 +14,13 @@ bool UEndGameWidget::Initialize()
 		return false;
 	}
 
-	if (RetryButton && GetOwningPlayerPawn()->IsNetMode(ENetMode::NM_ListenServer))
+	if (RetryButton)
 	{
 		RetryButton->OnClicked.AddDynamic(this, &ThisClass::RetryButtonClicked);
 	}
 	if (QuitButton)
 	{
 		QuitButton->OnClicked.AddDynamic(this, &ThisClass::QuitButtonClicked);
-	}
-
-	if (GetOwningPlayerPawn()->IsNetMode(ENetMode::NM_Client))
-	{
-		RetryButton->RemoveFromParent();
 	}
 
 	return true;
@@ -37,26 +33,23 @@ void UEndGameWidget::UpdateFinalScoreText(int32 InScore)
 
 void UEndGameWidget::RetryButtonClicked()
 {
-	UWorld* World = GetWorld();
-	if (World)
-	{
-		AMainGameMode* MainGameMode = Cast<AMainGameMode>(World->GetAuthGameMode());
-		MainGameMode->RestartGame();
-	}
+	RetryButton->SetIsEnabled(false);
+	Cast<AAsteroidsPlayerController>(GetOwningPlayer())->Server_VoteRestart();
 }
+
 
 void UEndGameWidget::QuitButtonClicked()
 {
 	if (GetOwningPlayerPawn()->IsNetMode(ENetMode::NM_Client))
 	{
-		GetOwningPlayer()->ClientTravel(MenuLevelPath, ETravelType::TRAVEL_Absolute);
+		GetOwningPlayer()->ClientTravel(MenuLevelPath, ETravelType::TRAVEL_Partial, false);
 	}
 	else
 	{
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			World->ServerTravel(MenuLevelPath);
+			World->ServerTravel(MenuLevelPath, false);
 		}
 	}
 }

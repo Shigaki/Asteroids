@@ -23,11 +23,6 @@ void AMainGameState::BeginPlay()
 			ScoreWidget->AddToViewport();
 		}
 	}
-
-	if (IsValid(EndGameWidgetClass))
-	{
-		EndGameWidget = Cast<UEndGameWidget>(CreateWidget(GetWorld(), EndGameWidgetClass));
-	}
 }
 
 void AMainGameState::UpdateScore(int32 InScore)
@@ -35,21 +30,6 @@ void AMainGameState::UpdateScore(int32 InScore)
 	Score += InScore;
 	ScoreWidget->UpdateScoreText(Score);
 }
-
-void AMainGameState::PopUpEndGameUI_Implementation()
-{
-	if (EndGameWidget != nullptr)
-	{
-		ScoreWidget->RemoveFromViewport();
-
-		EndGameWidget->UpdateFinalScoreText(Score);
-		EndGameWidget->AddToViewport();
-
-		UGameplayStatics::SetGamePaused(GetWorld(), true);
-	}
-}
-
-
 
 void AMainGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

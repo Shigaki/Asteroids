@@ -4,7 +4,7 @@
 #include "MainGameMode.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
-#include "Asteroids/MainGameState.h"
+#include "AsteroidsPlayerController.h"
 
 void AMainGameMode::BeginPlay()
 {
@@ -16,30 +16,30 @@ void AMainGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	PlayerControllerList.Add(NewPlayer);
-
+	PlayerControllerList.Add(Cast<AAsteroidsPlayerController>(NewPlayer));
 }
 
 void AMainGameMode::EndMatch()
 {
 	Super::EndMatch();
 
-	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, GetMatchState().ToString());
-	UWorld* World = GetWorld();
-	if (World)
+	for (AAsteroidsPlayerController* PlayerController : PlayerControllerList)
 	{
-		AMainGameState* MainGameState = Cast<AMainGameState>(World->GetGameState());
-		MainGameState->PopUpEndGameUI();
+		PlayerController->Client_PopUpEndGameUI();
 	}
-	//UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
 
-void AMainGameMode::PlayerReady()
+void AMainGameMode::VoteRestartGame(AAsteroidsPlayerController* InPlayer)
 {
-	++NumReadyPlayers;
-	if (NumReadyPlayers == NumPlayers)
+	if (!InPlayer->bVote)
 	{
-		RestartGame();
+		InPlayer->bVote = true;
+		++NumReadyPlayers;
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Players Readt: %d"), NumReadyPlayers));
+		if (NumReadyPlayers == NumPlayers)
+		{
+			RestartGame();
+		}
 	}
 }
 

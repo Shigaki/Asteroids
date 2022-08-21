@@ -27,21 +27,12 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, Category = "Widget")
 	class UScoreWidget* ScoreWidget;
 
-	UPROPERTY(EditAnywhere, Category = "Widget")
-	TSubclassOf<UUserWidget> EndGameWidgetClass;
-
-	UPROPERTY(VisibleInstanceOnly, Category = "Widget")
-	class UEndGameWidget* EndGameWidget;
-
 public:
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 Score;
 
 	void UpdateScore(int32 InScore);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void PopUpEndGameUI();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
