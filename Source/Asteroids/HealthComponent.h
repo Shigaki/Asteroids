@@ -26,8 +26,6 @@ protected:
 	UPROPERTY(Replicated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	int32 MaxHealth = 1;
 
-	UPROPERTY(Replicated, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	bool bDead = false ;
 
 public:
 
@@ -45,9 +43,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int32 TakeDamage(int32 InDamage);
-
-	UFUNCTION()
-	bool IsAlive();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

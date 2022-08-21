@@ -34,5 +34,7 @@ public:
 
 	void UpdateScore(int32 InScore);
 
+	void HideScoreUI();
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

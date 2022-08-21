@@ -27,8 +27,6 @@ AAsteroid::AAsteroid()
 		SB_Explosion = SB_ExplosionObj.Object;
 	}
 
-	Size = static_cast<ESize>(FMath::RandRange(0, 2));
-
 	bReplicates = true;
 	SetReplicateMovement(true);
 }
@@ -129,7 +127,7 @@ void AAsteroid::Deactivate()
 
 float AAsteroid::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount) <= 0))
+	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount)) <= 0)
 	{
 		Multicast_UpdatePlayerScore();
 		Multicast_PlayExplosionSound();

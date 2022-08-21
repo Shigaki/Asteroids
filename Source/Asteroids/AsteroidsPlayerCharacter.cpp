@@ -117,7 +117,7 @@ void AAsteroidsPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 
 float AAsteroidsPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount) <= 0))
+	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount)) <= 0)
 	{
 		EnterGhostMode();
 	}

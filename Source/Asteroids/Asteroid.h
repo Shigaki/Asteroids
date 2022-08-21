@@ -63,6 +63,7 @@ protected:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	UPROPERTY(VisibleAnywhere);
 	class UHealthComponent* HealthComponent;
 	
 public:
@@ -74,9 +75,9 @@ public:
 
 	UPROPERTY(Replicated)
 	bool bActive;
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, EditAnywhere, Category = "Properties")
 	float Speed;
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, EditAnywhere, Category = "Properties")
 	int32 ScoreValue;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

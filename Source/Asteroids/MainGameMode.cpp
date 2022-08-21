@@ -9,6 +9,13 @@
 void AMainGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	for (AAsteroidsPlayerController* PlayerController : PlayerControllerList)
+	{
+		FInputModeGameOnly InputModeData;
+		PlayerController->SetInputMode(InputModeData);
+		PlayerController->SetShowMouseCursor(false);
+	}
 }
 
 
@@ -26,6 +33,10 @@ void AMainGameMode::EndMatch()
 	for (AAsteroidsPlayerController* PlayerController : PlayerControllerList)
 	{
 		PlayerController->Client_PopUpEndGameUI();
+		FInputModeUIOnly InputModeData;
+		InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		PlayerController->SetInputMode(InputModeData);
+		PlayerController->SetShowMouseCursor(true);
 	}
 }
 
@@ -35,7 +46,6 @@ void AMainGameMode::VoteRestartGame(AAsteroidsPlayerController* InPlayer)
 	{
 		InPlayer->bVote = true;
 		++NumReadyPlayers;
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Players Readt: %d"), NumReadyPlayers));
 		if (NumReadyPlayers == NumPlayers)
 		{
 			RestartGame();
@@ -47,7 +57,6 @@ void AMainGameMode::EndMatchCheck()
 {
 	if (NumDeadPlayers == NumPlayers)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Players - Dead: %d, Total: %d"), NumDeadPlayers, NumPlayers));
 		EndMatch();
 	}
 }

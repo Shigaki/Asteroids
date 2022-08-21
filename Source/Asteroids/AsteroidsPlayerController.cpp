@@ -7,6 +7,7 @@
 #include "EndGameWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "MainGameMode.h"
+#include "MainGameState.h"
 
 void AAsteroidsPlayerController::BeginPlay()
 {
@@ -24,10 +25,14 @@ void AAsteroidsPlayerController::Client_PopUpEndGameUI_Implementation()
 {
 	if (EndGameWidget != nullptr)
 	{
-		//ScoreWidget->RemoveFromViewport();
-
-		EndGameWidget->UpdateFinalScoreText(100);
-		EndGameWidget->AddToViewport();
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			AMainGameState* MainGameState = Cast<AMainGameState>(World->GetGameState());
+			MainGameState->HideScoreUI();
+			EndGameWidget->UpdateFinalScoreText(MainGameState->Score);
+			EndGameWidget->AddToViewport();
+		}
 	}
 }
 

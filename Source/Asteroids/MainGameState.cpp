@@ -31,6 +31,11 @@ void AMainGameState::UpdateScore(int32 InScore)
 	ScoreWidget->UpdateScoreText(Score);
 }
 
+void AMainGameState::HideScoreUI()
+{
+	ScoreWidget->SetVisibility(ESlateVisibility::Hidden);
+}
+
 void AMainGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
