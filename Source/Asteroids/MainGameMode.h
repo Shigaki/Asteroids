@@ -41,6 +41,8 @@ public:
 
 	virtual void StartMatch() override;
 
+	void SetupMatch();
+
 	virtual void EndMatch() override;
 
 	void VoteRestartGame(AAsteroidsPlayerController* Player);

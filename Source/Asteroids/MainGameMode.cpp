@@ -12,10 +12,9 @@
 void AMainGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	if (GetNetMode() == ENetMode::NM_ListenServer)
 	{
-		SetMatchState(FName("WaitingToStart"));
 		MaxNumPlayers = 2;
 		WaitingPlayersText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), FVector(0.f, 0.f, 100.f), FRotator(90.f, 0.f, -90.f));
 		UTextRenderComponent* RenderComponent = WaitingPlayersText->GetTextRender();
@@ -27,7 +26,7 @@ void AMainGameMode::BeginPlay()
 	}
 	else if (GetNetMode() == ENetMode::NM_Standalone)
 	{
-		MaxNumPlayers = 1;
+		SetupMatch();
 	}
 }
 
@@ -42,23 +41,26 @@ void AMainGameMode::PostLogin(APlayerController* NewPlayer)
 	if (NumPlayers == MaxNumPlayers)
 	{
 		WaitingPlayersText->SetActorHiddenInGame(true);
-
-		UWorld* World = GetWorld();
-		if (World)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-
-			World->SpawnActor<AObjectSpawner>(AsteroidSpawner, FVector(0.f, 0.f, -1000.f), FRotator::ZeroRotator, SpawnParams);
-		}
-		StartMatch();
+		SetupMatch();
 	}
 }
 
 void AMainGameMode::StartMatch()
 {
 	Super::StartMatch();
+}
 
+void AMainGameMode::SetupMatch()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+
+		World->SpawnActor<AObjectSpawner>(AsteroidSpawner, FVector(0.f, 0.f, -1000.f), FRotator::ZeroRotator, SpawnParams);
+	}
+	StartMatch();
 }
 
 void AMainGameMode::EndMatch()

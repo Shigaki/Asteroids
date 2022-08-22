@@ -41,17 +41,6 @@ void UEndGameWidget::RetryButtonClicked()
 void UEndGameWidget::QuitButtonClicked()
 {
 	QuitButton->SetIsEnabled(false);
-	if (GetOwningPlayerPawn()->IsNetMode(ENetMode::NM_Client))
-	{
-		GetOwningPlayer()->ClientTravel(MenuLevelPath, ETravelType::TRAVEL_Partial, false);
-	}
-	else
-	{
-		UWorld* World = GetWorld();
-		if (World)
-		{
-			World->ServerTravel(MenuLevelPath, false);
-		}
-	}
+	GetOwningPlayer()->ClientTravel(MenuLevelPath, ETravelType::TRAVEL_Partial, false);
 }
 
