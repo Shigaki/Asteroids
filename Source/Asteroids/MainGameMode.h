@@ -24,14 +24,22 @@ protected:
 
 public:
 
+	UPROPERTY(EditAnywhere, Category = "AsteroidSpawner")
+	TSubclassOf<AActor> AsteroidSpawner;
+
 	int32 MaxNumPlayers = 2;
+
 	TArray<class AAsteroidsPlayerController*> PlayerControllerList;
 
 	int32 NumDeadPlayers = 0;
 
 	int32 NumReadyPlayers = 0;
 
+	class ATextRenderActor* WaitingPlayersText;
+
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+	virtual void StartMatch() override;
 
 	virtual void EndMatch() override;
 

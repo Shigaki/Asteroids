@@ -40,7 +40,6 @@ void UObjectPoolComponent::BeginPlay()
 				AAsteroid* PoolableActor = GetWorld()->SpawnActor<AAsteroid>(PooledObjectSubclass, FVector().ZeroVector, FRotator().ZeroRotator);
 				PoolableActor->SetActive(false);
 				Pool.Add(PoolableActor);
-				UE_LOG(LogTemp, Warning, TEXT("Added Object to Pool"));
 			}
 		}
 	}

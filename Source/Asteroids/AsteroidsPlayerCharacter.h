@@ -36,7 +36,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class USceneComponent* Muzzle;
 
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* SpaceshipMesh;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Audio")

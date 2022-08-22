@@ -37,15 +37,21 @@ void AAsteroidsPlayerController::Client_PopUpEndGameUI_Implementation()
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			AMainGameState* MainGameState = Cast<AMainGameState>(World->GetGameState());
-			MainGameState->HideScoreUI();
-			EndGameWidget->UpdateFinalScoreText(MainGameState->Score);
-			EndGameWidget->AddToViewport();
 			if (SB_ShowScore)
 			{
 				UGameplayStatics::PlaySound2D(GetWorld(), SB_ShowScore);
 			}
+			AMainGameState* MainGameState = Cast<AMainGameState>(GetWorld()->GetGameState());
+			MainGameState->HideScoreUI();
+			EndGameWidget->UpdateFinalScoreText(MainGameState->Score);
+			EndGameWidget->AddToViewport();
+
+			FInputModeUIOnly InputModeData;
+			InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			SetInputMode(InputModeData);
+			SetShowMouseCursor(true);
 		}
+		
 	}
 }
 

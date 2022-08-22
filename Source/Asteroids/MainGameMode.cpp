@@ -5,25 +5,60 @@
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
 #include "AsteroidsPlayerController.h"
+#include "ObjectSpawner.h"
+#include "Engine/TextRenderActor.h"
+#include "Components/TextRenderComponent.h"
 
 void AMainGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
-	for (AAsteroidsPlayerController* PlayerController : PlayerControllerList)
+	
+	if (GetNetMode() == ENetMode::NM_ListenServer)
 	{
-		FInputModeGameOnly InputModeData;
-		PlayerController->SetInputMode(InputModeData);
-		PlayerController->SetShowMouseCursor(false);
+		SetMatchState(FName("WaitingToStart"));
+		MaxNumPlayers = 2;
+		WaitingPlayersText = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), FVector(0.f, 0.f, 100.f), FRotator(90.f, 0.f, -90.f));
+		UTextRenderComponent* RenderComponent = WaitingPlayersText->GetTextRender();
+		RenderComponent->SetText(FText::FromString(TEXT("Waiting For Players")));
+		RenderComponent->SetTextRenderColor(FColor::White);
+		RenderComponent->SetWorldSize(72);
+		RenderComponent->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+		RenderComponent->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
+	}
+	else if (GetNetMode() == ENetMode::NM_Standalone)
+	{
+		MaxNumPlayers = 1;
 	}
 }
-
 
 void AMainGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
 	PlayerControllerList.Add(Cast<AAsteroidsPlayerController>(NewPlayer));
+
+	SetMatchState(FName("WaitingToStart"));
+
+	if (NumPlayers == MaxNumPlayers)
+	{
+		WaitingPlayersText->SetActorHiddenInGame(true);
+
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+
+			World->SpawnActor<AObjectSpawner>(AsteroidSpawner, FVector(0.f, 0.f, -1000.f), FRotator::ZeroRotator, SpawnParams);
+		}
+		StartMatch();
+	}
+}
+
+void AMainGameMode::StartMatch()
+{
+	Super::StartMatch();
+
 }
 
 void AMainGameMode::EndMatch()
@@ -33,10 +68,6 @@ void AMainGameMode::EndMatch()
 	for (AAsteroidsPlayerController* PlayerController : PlayerControllerList)
 	{
 		PlayerController->Client_PopUpEndGameUI();
-		FInputModeUIOnly InputModeData;
-		InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-		PlayerController->SetInputMode(InputModeData);
-		PlayerController->SetShowMouseCursor(true);
 	}
 }
 

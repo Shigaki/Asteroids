@@ -37,7 +37,6 @@ void AObjectSpawner::Spawn()
 	AAsteroid* PoolableActor = ObjectPooler->GetPooledObject();
 	if (PoolableActor == nullptr)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Cannot Spawn"));
 		GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false);
 		return;
 	}
@@ -49,5 +48,4 @@ void AObjectSpawner::Spawn()
 	PoolableActor->SetLifeSpan(LifeSpan);
 	PoolableActor->SetActive(true);
 	GetWorldTimerManager().SetTimer(SpawnCooldownTimer, this, &ThisClass::Spawn, SpawnCooldown, false);
-	//UE_LOG(LogTemp, Warning, TEXT("Spawn"));
 }

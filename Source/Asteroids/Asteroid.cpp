@@ -57,6 +57,11 @@ void AAsteroid::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (HasAuthority())
+	{
+		Size = static_cast<ESize>(FMath::RandRange(0, 2));
+	}
+	
 	switch(Size)
 	{
 		case ESize::Small:
@@ -67,12 +72,12 @@ void AAsteroid::BeginPlay()
 			break;
 		case ESize::Medium:
 			Mesh->SetWorldScale3D(FVector(8.f, 8.f, 8.f));
-			Speed = FMath::RandRange(40.f, 80.f);
+			Speed = FMath::RandRange(60.f, 100.f);
 			ScoreValue = 60;
 			HealthComponent->SetMaxHealth(2);
 			break;
 		case ESize::Large:
-			Mesh->SetWorldScale3D(FVector(14.f, 14.f, 14.f));
+			Mesh->SetWorldScale3D(FVector(13.f, 13.f, 13.f));
 			Speed = FMath::RandRange(20.f, 60.f);
 			ScoreValue = 30;
 			HealthComponent->SetMaxHealth(3);
