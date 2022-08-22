@@ -40,7 +40,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(Replicated, EditDefaultsOnly, Category = "Audio")
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
 	class USoundBase* SB_Explosion;
 	
 	float LifeSpan = 20.f;
@@ -56,7 +56,7 @@ protected:
 	float YawValue;
 
 	UFUNCTION(NetMulticast, Unreliable)
-	void Multicast_PlayExplosionSound();
+	void Multicast_PlayExplosionSound(bool bDead);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_UpdatePlayerScore();

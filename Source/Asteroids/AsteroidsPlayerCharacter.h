@@ -36,8 +36,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class USceneComponent* Muzzle;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* SpaceshipMesh;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	class USoundBase* SB_Shutdown;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	USoundBase* SB_Ressurect;
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multicast_PlayShutdownSound();
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multicast_PlayRessurectSound();
 
 public:	
 	// Called to bind functionality to input

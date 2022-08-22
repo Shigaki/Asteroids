@@ -72,7 +72,7 @@ void AAsteroid::BeginPlay()
 			HealthComponent->SetMaxHealth(2);
 			break;
 		case ESize::Large:
-			Mesh->SetWorldScale3D(FVector(13.f, 13.f, 13.f));
+			Mesh->SetWorldScale3D(FVector(14.f, 14.f, 14.f));
 			Speed = FMath::RandRange(20.f, 60.f);
 			ScoreValue = 30;
 			HealthComponent->SetMaxHealth(3);
@@ -112,11 +112,18 @@ void AAsteroid::Multicast_UpdatePlayerScore_Implementation()
 	}
 }
 
-void AAsteroid::Multicast_PlayExplosionSound_Implementation()
+void AAsteroid::Multicast_PlayExplosionSound_Implementation(bool bDead)
 {
 	if (SB_Explosion)
 	{
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_Explosion, GetActorLocation());
+		if (bDead)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_Explosion, GetActorLocation());
+		}
+		else
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_Explosion, GetActorLocation(), 1.f, 1.8f, 0.2f);
+		}
 	}
 }
 
@@ -129,9 +136,13 @@ float AAsteroid::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 {
 	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount)) <= 0)
 	{
+		Multicast_PlayExplosionSound(true);
 		Multicast_UpdatePlayerScore();
-		Multicast_PlayExplosionSound();
 		Deactivate();
+	}
+	else
+	{
+		Multicast_PlayExplosionSound(false);
 	}
 	return DamageAmount;
 }
@@ -143,5 +154,4 @@ void AAsteroid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AAsteroid, Size);
 	DOREPLIFETIME(AAsteroid, Speed);
 	DOREPLIFETIME(AAsteroid, ScoreValue);
-	DOREPLIFETIME(AAsteroid, SB_Explosion);
 }

@@ -30,6 +30,18 @@ AAsteroidsPlayerCharacter::AAsteroidsPlayerCharacter()
 	bGenerateOverlapEventsDuringLevelStreaming = false;
 	SpaceshipMesh->SetGenerateOverlapEvents(false);
 
+	static ConstructorHelpers::FObjectFinder<USoundBase> SB_ShutdownObj(TEXT("/Game/Core/FX/SFX/SoundCue/SC_ShipDestroyed"));
+	if (SB_ShutdownObj.Succeeded())
+	{
+		SB_Shutdown = SB_ShutdownObj.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> SB_RessurectObj(TEXT("/Game/Core/FX/SFX/SoundCue/SC_RessurectEnd"));
+	if (SB_RessurectObj.Succeeded())
+	{
+		SB_Ressurect = SB_RessurectObj.Object;
+	}
+
 	SetReplicates(true);
 	SetReplicateMovement(true);
 }
@@ -103,6 +115,22 @@ void AAsteroidsPlayerCharacter::TurnRight(float Value)
 	}
 }
 
+void AAsteroidsPlayerCharacter::Multicast_PlayShutdownSound_Implementation()
+{
+	if (SB_Shutdown)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_Shutdown, GetActorLocation());
+	}
+}
+
+void AAsteroidsPlayerCharacter::Multicast_PlayRessurectSound_Implementation()
+{
+	if (SB_Ressurect)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_Ressurect, GetActorLocation());
+	}
+}
+
 // Called to bind functionality to input
 void AAsteroidsPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -119,7 +147,15 @@ float AAsteroidsPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 {
 	if (HealthComponent->TakeDamage(FMath::RoundToInt32(DamageAmount)) <= 0)
 	{
+		//Multicast_PlayShutdownSound();
+		bDead = true;
 		EnterGhostMode();
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			AMainGameMode* MainGameMode = Cast<AMainGameMode>(UGameplayStatics::GetGameMode(World));
+			MainGameMode->IncrementNumDeadPlayers(bDead);
+		}
 	}
 	return DamageAmount;
 }
@@ -131,27 +167,21 @@ bool AAsteroidsPlayerCharacter::IsDead()
 
 void AAsteroidsPlayerCharacter::Ressurect()
 {
+	Multicast_PlayRessurectSound();
 	HealthComponent->SetHealth(HealthComponent->GetMaxHealth());
+	//remove mesh transparency
 	bDead = false;
 	UWorld* World = GetWorld();
 	if (World)
 	{
 		AMainGameMode* MainGameMode = Cast<AMainGameMode>(UGameplayStatics::GetGameMode(World));
 		MainGameMode->IncrementNumDeadPlayers(bDead);
-		//remove mesh transparency
 	}
 }
 
 void AAsteroidsPlayerCharacter::EnterGhostMode()
 {
-	bDead = true;
-	UWorld* World = GetWorld();
-	if (World)
-	{
-		AMainGameMode* MainGameMode = Cast<AMainGameMode>(UGameplayStatics::GetGameMode(World));
-		MainGameMode->IncrementNumDeadPlayers(bDead);
-		//apply mesh transparency
-	}
+	//apply mesh transparency
 }
 
 void AAsteroidsPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

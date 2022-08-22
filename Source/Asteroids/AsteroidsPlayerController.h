@@ -14,9 +14,14 @@ class ASTEROIDS_API AAsteroidsPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+	AAsteroidsPlayerController();
+	
 protected:
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	USoundBase* SB_ShowScore;
 	
 public:
 

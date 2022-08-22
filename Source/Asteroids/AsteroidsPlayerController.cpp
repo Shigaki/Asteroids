@@ -9,6 +9,15 @@
 #include "MainGameMode.h"
 #include "MainGameState.h"
 
+AAsteroidsPlayerController::AAsteroidsPlayerController()
+{
+	static ConstructorHelpers::FObjectFinder<USoundBase> SB_ShowScoreObj(TEXT("/Game/Core/FX/SFX/SoundCue/SC_GameOver"));
+	if (SB_ShowScoreObj.Succeeded())
+	{
+		SB_ShowScore = SB_ShowScoreObj.Object;
+	}
+}
+
 void AAsteroidsPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -32,6 +41,10 @@ void AAsteroidsPlayerController::Client_PopUpEndGameUI_Implementation()
 			MainGameState->HideScoreUI();
 			EndGameWidget->UpdateFinalScoreText(MainGameState->Score);
 			EndGameWidget->AddToViewport();
+			if (SB_ShowScore)
+			{
+				UGameplayStatics::PlaySound2D(GetWorld(), SB_ShowScore);
+			}
 		}
 	}
 }
